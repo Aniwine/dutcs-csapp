@@ -1,0 +1,19 @@
+3.61
+//这是最开始的版本，无法用条件传送至令
+long cread(long *xp){
+return (xp? *xp:0);
+}  
+
+//这里是我的版本
+//原理：在表达式 变量v=test_exp? then_exp:else_exp里面
+//会执行这样的操作，v=then_exp;
+//		   temp=else_exp;
+//		   if(!test_exp) v=temp;
+//		   return v;
+//意思就是说，他会把后面两种结果先算出来，根据测试条件是否改变返回值。
+//问题就出在对指针先做出了引用，解决的办法就是，对xp指针，不对他做间接引用。并且引入
+//一个新的指针和变量分别做返回值和0的表达式。
+long cread(long*xp){
+long else_exp=0;
+long *p=(xp? xp:&else_exp);
+return *p;}
