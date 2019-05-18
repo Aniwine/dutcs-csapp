@@ -1,4 +1,4 @@
-3.61
+﻿3.61
 //这是最开始的版本，无法用条件传送至令
 long cread(long *xp){
 return (xp? *xp:0);
@@ -17,3 +17,52 @@ long cread(long*xp){
 long else_exp=0;
 long *p=(xp? xp:&else_exp);
 return *p;}
+
+
+3.63
+sub  $0x3c ,%rsi #index=x-60
+cmp  $0x5,%rsi   #比较index和5，可知道0～5至多6项
+ja   4005c3<switch_prob+0x33> #跳至default
+jmpq *0x4006f8(,%rsi,8) #跳至跳转表，初始地址是0x4006f8
+.L1(a1)(60,62):
+lea  0x0(,%rdi,8),%rax  #result=8x   
+retq 	#return 
+.L2(aa)(63):
+mov %rdi,%rax #   result=x
+sar $0x3,%rax #result>>3(算术右移）
+retq #return 
+.L3(b2)(64):
+mov %rdi,%rax #result=x
+shl $0x4,rax  #result<<4
+sub %rdi,%rax #result-x
+mov %rax,%rdi #val=result
+.L4(bf)(65):
+imul %rdi,%rdi # x*x
+.L5(c3)(default):
+lea 0x4b(%rdi),%rax #result=x+75
+retq 	#return
+1,根据跳转表将代码分段
+2,根据跳转表将6种情况按顺序标注出来
+注意：这些标号可以随便起名字，各个代码段也没有顺序关系。
+现在，写出原c代码
+省略其他部分，
+switch(n){
+case 60:
+case 62:
+	result=8*x;
+	break;
+case 63:
+	result>>=3;
+	break;
+case 64:
+	 result<<=4;
+	 result-=x;
+	 x=result;
+case 65:
+	 x*=x;
+default:
+	 result=x+75;
+}
+							
+
+
